@@ -4,7 +4,7 @@ import com.smartplanner.web.dao.TaskDAO;
 import com.smartplanner.web.model.Status;
 import com.smartplanner.web.model.Task;
 import com.smartplanner.web.model.User;
-
+import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
@@ -38,7 +38,7 @@ import java.util.List;
  * *
  * ================================================================
  */
-
+@Service
 public class TaskService {
     private final TaskDAO taskDAO;
 

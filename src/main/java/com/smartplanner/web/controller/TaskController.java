@@ -25,46 +25,34 @@ import java.util.List;
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
-    private TaskService taskService = new TaskService();
-    /*
-     * ============================================================
-     * ENDPOINT: ADD TASK
-     * ============================================================
-     * URL:
-     * http://localhost:8080/tasks/add
-     */
-    @GetMapping("/add")
-    public String addTask(
-            @RequestParam String username,
-            @RequestParam String title,
-            @RequestParam String description,
-            @RequestParam String dueDate,
-            @RequestParam String priority
-    ) {
+    private final TaskService taskService;
 
-        User user = new User(username, ""); // password not needed here
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
+    // ADD TASK
+    @PostMapping("/add")
+    public String addTask(@RequestBody TaskRequest request) {
+        System.out.println(">>> ADD endpoint hit");
+
+        User user = new User(request.getUsername(), "");
 
         Task task = new Task(
-                title,
-                description,
-                LocalDate.parse(dueDate),
-                Priority.valueOf(priority.toUpperCase())
+                request.getTitle(),
+                request.getDescription(),
+                LocalDate.parse(request.getDueDate()),
+                Priority.valueOf(request.getPriority().toUpperCase())
         );
-
         taskService.addTask(user, task);
-
         return "Task added successfully!";
     }
 
-    /*
-     * ============================================================
-     * ENDPOINT: VIEW TASKS
-     * ============================================================
-     * URL:
-     * http://localhost:8080/tasks/view
-     */
+    // VIEW TASKS
     @GetMapping("/view")
     public List<Task> viewTasks(@RequestParam String username) {
+        System.out.println(">>> VIEW endpoint hit");
+
         User user = new User(username, "");
         return taskService.getTasks(user);
     }

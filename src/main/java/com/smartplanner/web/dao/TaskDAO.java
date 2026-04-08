@@ -35,6 +35,7 @@ public class TaskDAO {
 
         String sql = "INSERT INTO tasks(username, title, description, dueDate, priority, status) VALUES (?, ?, ?, ?, ?, ?)";
 
+        System.out.println("Saving task for user: " + username);
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
