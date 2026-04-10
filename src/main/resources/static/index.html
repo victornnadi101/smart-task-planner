@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Smart Task Planner</title>
+        <link rel="stylesheet" href="/styles.css">
     </head>
     <body>
     <!-- Main Title -->
@@ -26,7 +27,7 @@
 
     <!-- Due Date -->
     <label for="dueDate">Due Date:</label><br>
-    <input id="dueDate" type="date" placeholder="YYYY-MM-DD" required><br><br>
+    <input id="dueDate" type="date" required><br><br>
 
     <!-- Priority -->
     <label for="priority">Priority:</label><br>
@@ -44,24 +45,40 @@
     <!-- List where tasks will be displayed -->
     <ul id="taskList"></ul>
         <script>
+            // Prevent past dates
+            document.getElementById("dueDate").min = new Date().toISOString().split("T")[0];
+
             // Function to send task data to backend API
             function addTask() {
-                // Get input values
-                const username = document.getElementById("username").value;
-                const title = document.getElementById("title").value;
-                const description = document.getElementById("description").value;
+                // Get values
+                const username = document.getElementById("username").value.trim();
+                const title = document.getElementById("title").value.trim();
+                const description = document.getElementById("description").value.trim();
                 const dueDate = document.getElementById("dueDate").value;
-                const priority = document.getElementById("priority").value;
+                const priority = document.getElementById("priority").value.trim();
 
-                // Validate date (no past dates allowed)
-                const today = new Date().toISOString().split("T")[0];
-
-                if (dueDate < today) {
-                    alert("You cannot select a past date.");
+                // Field-specific validation
+                if (!username) {
+                    alert("Username is required.");
                     return;
                 }
 
-                // Build request object
+                if (!title) {
+                    alert("Title is required.");
+                    return;
+                }
+
+                if (!dueDate) {
+                    alert("Due Date is required.");
+                    return;
+                }
+
+                if (!priority) {
+                    alert("Priority is required.");
+                    return;
+                }
+
+                // Build request
                 const data = {
                     username,
                     title,
