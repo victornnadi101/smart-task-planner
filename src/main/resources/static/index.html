@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Smart Task Planner</title>
+    </head>
+    <body>
+    <!-- Main Title -->
+    <h1>Smart Task Planner</h1>
+
+    <!-- Section: Add Task -->
+    <h2>Add Task</h2>
+
+    <!-- Input fields for task details -->
+    <!-- Username -->
+    <label for="username">Username:</label><br>
+    <input id="username" placeholder="Enter username" required><br><br>
+
+    <!-- Title -->
+    <label for="title">Title:</label><br>
+    <input id="title" placeholder="Enter task title" required><br><br>
+
+    <!-- Description -->
+    <label for="description">Description:</label><br>
+    <input id="description" placeholder="Enter description"><br><br>
+
+    <!-- Due Date -->
+    <label for="dueDate">Due Date:</label><br>
+    <input id="dueDate" type="date" placeholder="YYYY-MM-DD" required><br><br>
+
+    <!-- Priority -->
+    <label for="priority">Priority:</label><br>
+    <input id="priority" placeholder="HIGH / MEDIUM / LOW" required><br><br>
+
+    <!-- Button to send task to backend -->
+    <button onclick="addTask()">Add Task</button>
+
+    <!-- Section: View Tasks -->
+    <h2>Tasks</h2>
+
+    <!-- Button to load tasks from backend -->
+    <button onclick="loadTasks()">Load Tasks</button>
+
+    <!-- List where tasks will be displayed -->
+    <ul id="taskList"></ul>
+        <script>
+            // Function to send task data to backend API
+            function addTask() {
+                // Get input values
+                const username = document.getElementById("username").value;
+                const title = document.getElementById("title").value;
+                const description = document.getElementById("description").value;
+                const dueDate = document.getElementById("dueDate").value;
+                const priority = document.getElementById("priority").value;
+
+                // Validate date (no past dates allowed)
+                const today = new Date().toISOString().split("T")[0];
+
+                if (dueDate < today) {
+                    alert("You cannot select a past date.");
+                    return;
+                }
+
+                // Build request object
+                const data = {
+                    username,
+                    title,
+                    description,
+                    dueDate,
+                    priority
+                };
+
+                // Send POST request to backend
+                fetch("http://localhost:8080/tasks/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(res => res.json())
+                    .then(response => {
+                        alert(response.message); // Show success message
+                    });
+            }
+
+            // Function to load tasks from backend
+            function loadTasks() {
+                const username = document.getElementById("username").value;
+
+                // Send GET request to backend
+                fetch(`http://localhost:8080/tasks/view?username=${username}`)
+                    .then(res => res.json())
+                    .then(tasks => {
+                        const list = document.getElementById("taskList");
+                        list.innerHTML = "";
+
+                        // Loop through tasks and display them
+                        tasks.forEach(task => {
+                            const li = document.createElement("li");
+                            li.innerText = `${task.title} - ${task.status}`;
+                            list.appendChild(li);
+                        });
+                    });
+            }
+        </script>
+    </body>
+</html>
