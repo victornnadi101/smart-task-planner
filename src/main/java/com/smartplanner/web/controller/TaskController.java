@@ -4,6 +4,7 @@ import com.smartplanner.web.model.Task;
 import com.smartplanner.web.model.Priority;
 import com.smartplanner.web.model.User;
 import com.smartplanner.web.service.TaskService;
+import com.smartplanner.web.controller.ApiResponse;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class TaskController {
 
     // ADD TASK
     @PostMapping("/add")
-    public String addTask(@RequestBody TaskRequest request) {
+    public ApiResponse addTask(@RequestBody TaskRequest request) {
         System.out.println(">>> ADD endpoint hit");
 
         User user = new User(request.getUsername(), "");
@@ -45,7 +46,7 @@ public class TaskController {
                 Priority.valueOf(request.getPriority().toUpperCase())
         );
         taskService.addTask(user, task);
-        return "Task added successfully!";
+        return new ApiResponse("Task added successfully", true);
     }
 
     // VIEW TASKS
