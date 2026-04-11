@@ -130,11 +130,31 @@
 
                         tasks.forEach(task => {
 
+                            const today = new Date();
+                            const due = new Date(task.dueDate);
+
+                            // Default
                             let color = "black";
+
+                            // PRIORITY COLORS
                             if (task.priority === "HIGH") color = "red";
                             if (task.priority === "MEDIUM") color = "orange";
                             if (task.priority === "LOW") color = "green";
 
+                            // STATUS OVERRIDE
+                            if (task.status === "COMPLETED") {
+                                color = "green";
+                            }
+
+                            // OVERDUE (Only if still pending)
+                            if (task.status === "PENDING" && due < today) {
+                                color = "red";
+                            }
+
+                            // UPCOMING (pending but not overdue)
+                            if (task.status === "PENDING" && due >= today) {
+                                color = "orange";
+                            }
                             const div = document.createElement("div");
 
                             div.style.border = "1px solid #ccc";
@@ -149,7 +169,9 @@
                                 <p style="color:${color}; font-weight:bold;">
                                     Priority: ${task.priority}
                                 </p>
-                                <p>Status: ${task.status}</p>
+                                <p style="color:${color}; font-weight:bold;">
+                                    Status: ${task.status}
+                                </p>
 
                                 <button onclick="completeTask(${task.taskId})">Complete</button>
                                 <button onclick="deleteTask(${task.taskId})">Delete</button>
@@ -185,18 +207,15 @@
                 const today = new Date();
 
                 tasks.forEach(task => {
-
                     const due = new Date(task.dueDate);
                     const diffDays = (due - today) / (1000 * 60 * 60 * 24);
 
-                    // Due today or tomorrow
-                    if (diffDays <= 1 && diffDays >= 0 && task.status === "PENDING") {
-                        alert(`⚠️ Task "${task.title}" is due soon!`);
-                    }
+                    if (task.status === "COMPLETED") return;
 
-                    // Overdue
-                    if (diffDays < 0 && task.status === "PENDING") {
-                        alert(`❗ Task "${task.title}" is OVERDUE!`);
+                    if (diffDays < 0) {
+                        alert(`❗ OVERDUE: "${task.title}"`);
+                    } else if (diffDays <= 1) {
+                        alert(`⚠️ Due soon: "${task.title}"`);
                     }
                 });
             }
