@@ -9,6 +9,18 @@
     <!-- Main Title -->
     <h1>Smart Task Planner</h1>
 
+    <!-- Notifications -->
+    <h2>Notification Settings</h2>
+    <label>
+        <input type="checkbox" id="notify1" checked>
+        Notify 1 day before
+    </label><br>
+
+    <label>
+        <input type="checkbox" id="notify3" checked>
+        Notify 3 days before
+    </label><br><br>
+
     <!-- Section: Add Task -->
     <h2>Add Task</h2>
 
@@ -45,6 +57,8 @@
     <!-- List where tasks will be displayed -->
     <div id="taskList"></div>
         <script>
+            let shownAlerts = new Set();
+
             // Prevent past dates
             document.getElementById("dueDate").min = new Date().toISOString().split("T")[0];
 
@@ -206,16 +220,33 @@
             function checkDeadlines(tasks) {
                 const today = new Date();
 
+                const notify1 = document.getElementById("notify1").checked;
+                const notify3 = document.getElementById("notify3").checked;
+
                 tasks.forEach(task => {
-                    const due = new Date(task.dueDate);
-                    const diffDays = (due - today) / (1000 * 60 * 60 * 24);
 
                     if (task.status === "COMPLETED") return;
 
+                    const due = new Date(task.dueDate);
+                    const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+                    const key = task.taskId + "-" + diffDays;
+
+                    if (shownAlerts.has(key)) return;
+                    shownAlerts.add(key);
+
+                    // Overdue
                     if (diffDays < 0) {
                         alert(`❗ OVERDUE: "${task.title}"`);
-                    } else if (diffDays <= 1) {
-                        alert(`⚠️ Due soon: "${task.title}"`);
+                    }
+
+                    // 1-day notification
+                    if (notify1 && diffDays === 1) {
+                        alert(`⚠️ "${task.title}" is due in 1 day!`);
+                    }
+
+                    // 3-day notification
+                    if (notify3 && diffDays === 3) {
+                        alert(`📅 "${task.title}" is due in 3 days!`);
                     }
                 });
             }
