@@ -43,7 +43,7 @@
     <button onclick="loadTasks()">Load Tasks</button>
 
     <!-- List where tasks will be displayed -->
-    <ul id="taskList"></ul>
+    <div id="taskList"></div>
         <script>
             // Prevent past dates
             document.getElementById("dueDate").min = new Date().toISOString().split("T")[0];
@@ -103,22 +103,102 @@
 
             // Function to load tasks from backend
             function loadTasks() {
-                const username = document.getElementById("username").value;
+                const username = document.getElementById("username").value.trim();
 
-                // Send GET request to backend
+                if (!username) {
+                    alert("Username is required to load tasks.");
+                    return;
+                }
+
                 fetch(`http://localhost:8080/tasks/view?username=${username}`)
                     .then(res => res.json())
                     .then(tasks => {
+
                         const list = document.getElementById("taskList");
                         list.innerHTML = "";
 
-                        // Loop through tasks and display them
-                        tasks.forEach(task => {
-                            const li = document.createElement("li");
-                            li.innerText = `${task.title} - ${task.status}`;
-                            list.appendChild(li);
+                        if (!Array.isArray(tasks) || tasks.length === 0) {
+                            list.innerHTML = "<p>No tasks found.</p>";
+                            return;
+                        }
+
+                        // Sort priority
+                        tasks.sort((a, b) => {
+                            const order = { HIGH: 1, MEDIUM: 2, LOW: 3 };
+                            return order[a.priority] - order[b.priority];
                         });
+
+                        tasks.forEach(task => {
+
+                            let color = "black";
+                            if (task.priority === "HIGH") color = "red";
+                            if (task.priority === "MEDIUM") color = "orange";
+                            if (task.priority === "LOW") color = "green";
+
+                            const div = document.createElement("div");
+
+                            div.style.border = "1px solid #ccc";
+                            div.style.padding = "10px";
+                            div.style.margin = "10px";
+                            div.style.borderRadius = "5px";
+
+                            div.innerHTML = `
+                                <p><strong>${task.title}</strong></p>
+                                <p>${task.description}</p>
+                                <p>Due: ${task.dueDate}</p>
+                                <p style="color:${color}; font-weight:bold;">
+                                    Priority: ${task.priority}
+                                </p>
+                                <p>Status: ${task.status}</p>
+
+                                <button onclick="completeTask(${task.taskId})">Complete</button>
+                                <button onclick="deleteTask(${task.taskId})">Delete</button>
+                            `;
+
+                            list.appendChild(div);
+                        });
+
+                        // Call Notifications
+                        checkDeadlines(tasks);
                     });
+            }
+
+            function completeTask(taskId) {
+                fetch(`http://localhost:8080/tasks/complete?id=${taskId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        alert(data.message);
+                        loadTasks(); // refresh list
+                    });
+            }
+
+            function deleteTask(taskId) {
+                fetch(`http://localhost:8080/tasks/delete?id=${taskId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        alert(data.message);
+                        loadTasks(); // refresh list
+                    });
+            }
+
+            function checkDeadlines(tasks) {
+                const today = new Date();
+
+                tasks.forEach(task => {
+
+                    const due = new Date(task.dueDate);
+                    const diffDays = (due - today) / (1000 * 60 * 60 * 24);
+
+                    // Due today or tomorrow
+                    if (diffDays <= 1 && diffDays >= 0 && task.status === "PENDING") {
+                        alert(`⚠️ Task "${task.title}" is due soon!`);
+                    }
+
+                    // Overdue
+                    if (diffDays < 0 && task.status === "PENDING") {
+                        alert(`❗ Task "${task.title}" is OVERDUE!`);
+                    }
+                });
             }
         </script>
     </body>

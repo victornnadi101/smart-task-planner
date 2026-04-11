@@ -122,7 +122,7 @@ public class TaskService {
      *
      * Marks a task as completed in the database.
      */
-    public void completeTask(User user, int taskId) {
+    public void completeTask(int taskId) {
         taskDAO.completeTask(taskId);
         System.out.println("\nTask completed successfully.");
     }
@@ -134,7 +134,7 @@ public class TaskService {
      *
      * Deletes a task from the database.
      */
-    public void deleteTask(User user, int taskId) {
+    public void deleteTask(int taskId) {
         taskDAO.deleteTask(taskId);
         System.out.println("\nTask deleted successfully.");
     }

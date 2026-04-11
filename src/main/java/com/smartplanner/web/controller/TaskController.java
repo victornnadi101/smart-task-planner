@@ -57,4 +57,20 @@ public class TaskController {
         User user = new User(username, "");
         return taskService.getTasks(user);
     }
+
+    @GetMapping("/complete")
+    public ApiResponse completeTask(@RequestParam int id) {
+
+        taskService.completeTask(id);
+
+        return new ApiResponse("Task completed", true);
+    }
+
+    @GetMapping("/delete")
+    public ApiResponse deleteTask(@RequestParam int id) {
+
+        taskService.deleteTask(id);
+
+        return new ApiResponse("Task deleted", true);
+    }
 }
