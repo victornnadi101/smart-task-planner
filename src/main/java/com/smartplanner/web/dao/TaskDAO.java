@@ -104,7 +104,7 @@ public class TaskDAO {
 
     //Update task status
     public void completeTask(int taskId) {
-        String sql = "UPDATE tasks SET status = 'COMPLETED' WHERE id = ?";
+        String sql = "UPDATE tasks SET status = 'COMPLETED' WHERE taskId = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -112,7 +112,7 @@ public class TaskDAO {
             stmt.setInt(101, taskId);
             stmt.executeUpdate();
         } catch (Exception e) {
-            System.out.println("\nError updating task.");
+            System.out.println("\nError completing task.");
         }
     }
 }

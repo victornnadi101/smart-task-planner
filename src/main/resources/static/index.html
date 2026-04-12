@@ -3,251 +3,335 @@
     <head>
         <meta charset="UTF-8">
         <title>Smart Task Planner</title>
+
+        <!-- External CSS -->
         <link rel="stylesheet" href="/styles.css">
     </head>
+
     <body>
-    <!-- Main Title -->
-    <h1>Smart Task Planner</h1>
+    <!-- =========================
+         APP TITLE
+         =========================
+    -->
+    <h1 class="app-title">Smart Task Planner</h1>
 
-    <!-- Notifications -->
-    <h2>Notification Settings</h2>
-    <label>
-        <input type="checkbox" id="notify1" checked>
-        Notify 1 day before
-    </label><br>
+    <!-- =================
+         SIGNUP SECTION
+         =================
+    -->
+    <div id="signupPage" class="container" style="display:none;">
 
-    <label>
-        <input type="checkbox" id="notify3" checked>
-        Notify 3 days before
-    </label><br><br>
+        <h2>📝 Sign Up</h2>
 
-    <!-- Section: Add Task -->
-    <h2>Add Task</h2>
+        <label>Username:</label><br>
+        <input id="signupUsername"><br><br>
 
-    <!-- Input fields for task details -->
-    <!-- Username -->
-    <label for="username">Username:</label><br>
-    <input id="username" placeholder="Enter username" required><br><br>
+        <label>Password:</label><br>
+        <input id="signupPassword" type="password"><br><br>
 
-    <!-- Title -->
-    <label for="title">Title:</label><br>
-    <input id="title" placeholder="Enter task title" required><br><br>
+        <button onclick="registerUser()">Create Account</button>
+        <button onclick="showLogin()">Back to Login</button>
 
-    <!-- Description -->
-    <label for="description">Description:</label><br>
-    <input id="description" placeholder="Enter description"><br><br>
+    </div>
+    <!-- =================
+         LOGIN SECTION
+         =================
+    -->
+    <div id="loginSection" class="container">
 
-    <!-- Due Date -->
-    <label for="dueDate">Due Date:</label><br>
-    <input id="dueDate" type="date" required><br><br>
+        <h2>🔐 Login</h2>
 
-    <!-- Priority -->
-    <label for="priority">Priority:</label><br>
-    <input id="priority" placeholder="HIGH / MEDIUM / LOW" required><br><br>
+        <!-- Username input -->
+        <label for="loginUsername">Username:</label><br>
+        <input id="loginUsername" placeholder="Enter username"><br><br>
 
-    <!-- Button to send task to backend -->
-    <button onclick="addTask()">Add Task</button>
+        <!-- Password input -->
+        <label for="loginPassword">Password:</label><br>
+        <input id="loginPassword" type="password" placeholder="Enter password"><br><br>
 
-    <!-- Section: View Tasks -->
-    <h2>Tasks</h2>
+        <!-- Login button -->
+        <button onclick="loginUser()">Login</button>
 
-    <!-- Button to load tasks from backend -->
-    <button onclick="loadTasks()">Load Tasks</button>
+    </div>
 
-    <!-- List where tasks will be displayed -->
-    <div id="taskList"></div>
+    <!-- =================
+         DASHBOARD SECTION
+         =================
+    -->
+    <div id="dashboardPage" class="container" style="display:none;">
+
+        <h2>📊 Dashboard</h2>
+
+        <button onclick="showAdd()">Add Task</button>
+        <button onclick="showTasks()">View Tasks</button>
+
+    </div>
+
+    <div id="appSection" style="display:none;">
+        <div class="container">
+            <!-- =========================
+                 NOTIFICATION SETTINGS
+                 =========================
+            -->
+            <h2>🔔 Notification Settings</h2>
+            <div class="settings">
+                <label class="checkbox">
+                    <input type="checkbox" id="notify1" checked>
+                    1 Day Before
+                </label>
+
+                <label class="checkbox">
+                    <input type="checkbox" id="notify3" checked>
+                    3 Days Before
+                </label>
+            </div>
+
+        <!-- =========================
+             ADD TASK SECTION
+             =========================
+        -->
+        <h2>➕ Add Task</h2>
+
+        <!-- Title -->
+        <label for="title">Title:</label><br>
+        <input id="title" placeholder="Enter task title"><br><br>
+
+        <!-- Description -->
+        <label for="description">Description:</label><br>
+        <input id="description" placeholder="Enter description"><br><br>
+
+        <!-- Due Date -->
+        <label for="dueDate">Due Date:</label><br>
+        <input id="dueDate" type="date"><br><br>
+
+        <!-- Priority -->
+        <label for="priority">Priority:</label><br>
+        <input id="priority" placeholder="HIGH / MEDIUM / LOW"><br><br>
+
+        <button onclick="addTask()">Add Task</button>
+        <button onclick="showDashboard()">Back</button>
+
+        <!-- =========================
+             TASK DISPLAY
+             =========================
+        -->
+            <div id="tasksPage" class="container" style="display:none;">
+                <h2>📌 Tasks</h2>
+                <button onclick="loadTasks()">Load Tasks</button>
+                <button onclick="showDashboard()">Back</button>
+                <div id="taskList"></div>
+            </div>
+        </div>
+    </div>
         <script>
+            function showLogin() {
+                hideAll();
+                document.getElementById("loginPage").style.display = "block";
+            }
+
+            function showSignup() {
+                hideAll();
+                document.getElementById("signupPage").style.display = "block";
+            }
+
+            function showDashboard() {
+                hideAll();
+                document.getElementById("dashboardPage").style.display = "block";
+            }
+
+            function showAdd() {
+                hideAll();
+                document.getElementById("addPage").style.display = "block";
+            }
+
+            function showTasks() {
+                hideAll();
+                document.getElementById("tasksPage").style.display = "block";
+            }
+
+            function hideAll() {
+                document.getElementById("loginPage").style.display = "none";
+                document.getElementById("signupPage").style.display = "none";
+                document.getElementById("dashboardPage").style.display = "none";
+                document.getElementById("addPage").style.display = "none";
+                document.getElementById("tasksPage").style.display = "none";
+            }
+
+            function registerUser() {
+                const username = document.getElementById("signupUsername").value;
+                const password = document.getElementById("signupPassword").value;
+
+                fetch(`http://localhost:8080/users/register?username=${username}&password=${password}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        alert(data.message);
+                        showLogin();
+                    });
+            }
+
+            let currentUser = "";
+
+            function loginUser() {
+                const username = document.getElementById("loginUsername").value;
+                const password = document.getElementById("loginPassword").value;
+
+                fetch(`http://localhost:8080/users/login?username=${username}&password=${password}`)
+                    .then(res => res.json())
+                    .then(data => {
+
+                        if (data.success) {
+                            currentUser = username;
+                            alert("Login successful!");
+                            showDashboard();
+                        } else {
+                            alert("Invalid login.");
+                        }
+                    });
+            }
+
+            /* =========================
+               GLOBAL VARIABLES
+               =========================
+            */
             let shownAlerts = new Set();
 
-            // Prevent past dates
-            document.getElementById("dueDate").min = new Date().toISOString().split("T")[0];
+            /* =========================
+               SET MIN DATE AFTER PAGE LOAD
+               =========================
+            */
+            window.onload = function () {
+                document.getElementById("dueDate").min =
+                    new Date().toISOString().split("T")[0];
+            };
 
-            // Function to send task data to backend API
+            /* =========================
+               ADD TASK FUNCTION
+               =========================
+            */
             function addTask() {
-                // Get values
-                const username = document.getElementById("username").value.trim();
                 const title = document.getElementById("title").value.trim();
                 const description = document.getElementById("description").value.trim();
                 const dueDate = document.getElementById("dueDate").value;
                 const priority = document.getElementById("priority").value.trim();
 
-                // Field-specific validation
-                if (!username) {
-                    alert("Username is required.");
-                    return;
-                }
+                // Validation
+                if (!title) return alert("Title is required.");
+                if (!dueDate) return alert("Due Date is required.");
+                if (!priority) return alert("Priority is required.");
 
-                if (!title) {
-                    alert("Title is required.");
-                    return;
-                }
-
-                if (!dueDate) {
-                    alert("Due Date is required.");
-                    return;
-                }
-
-                if (!priority) {
-                    alert("Priority is required.");
-                    return;
-                }
-
-                // Build request
                 const data = {
-                    username,
+                    username: currentUser,
                     title,
                     description,
                     dueDate,
                     priority
                 };
 
-                // Send POST request to backend
                 fetch("http://localhost:8080/tasks/add", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(data)
                 })
                     .then(res => res.json())
-                    .then(response => {
-                        alert(response.message); // Show success message
-                    });
+                    .then(response => alert(response.message));
             }
 
-            // Function to load tasks from backend
+            /* =========================
+               LOAD TASKS
+               =========================
+            */
             function loadTasks() {
-                const username = document.getElementById("username").value.trim();
-
-                if (!username) {
-                    alert("Username is required to load tasks.");
-                    return;
-                }
-
-                fetch(`http://localhost:8080/tasks/view?username=${username}`)
+                fetch(`http://localhost:8080/tasks/view?username=testuser`)
                     .then(res => res.json())
                     .then(tasks => {
-
                         const list = document.getElementById("taskList");
                         list.innerHTML = "";
 
-                        if (!Array.isArray(tasks) || tasks.length === 0) {
+                        if (!tasks.length) {
                             list.innerHTML = "<p>No tasks found.</p>";
                             return;
                         }
 
-                        // Sort priority
+                        // Sort by priority
                         tasks.sort((a, b) => {
-                            const order = { HIGH: 1, MEDIUM: 2, LOW: 3 };
+                            const order = {HIGH: 1, MEDIUM: 2, LOW: 3};
                             return order[a.priority] - order[b.priority];
                         });
 
+                        const today = new Date();
+
                         tasks.forEach(task => {
-
-                            const today = new Date();
                             const due = new Date(task.dueDate);
+                            let color = "orange";
 
-                            // Default
-                            let color = "black";
+                            if (task.status === "COMPLETED") color = "green";
+                            else if (due < today) color = "red";
 
-                            // PRIORITY COLORS
-                            if (task.priority === "HIGH") color = "red";
-                            if (task.priority === "MEDIUM") color = "orange";
-                            if (task.priority === "LOW") color = "green";
-
-                            // STATUS OVERRIDE
-                            if (task.status === "COMPLETED") {
-                                color = "green";
-                            }
-
-                            // OVERDUE (Only if still pending)
-                            if (task.status === "PENDING" && due < today) {
-                                color = "red";
-                            }
-
-                            // UPCOMING (pending but not overdue)
-                            if (task.status === "PENDING" && due >= today) {
-                                color = "orange";
-                            }
                             const div = document.createElement("div");
-
-                            div.style.border = "1px solid #ccc";
-                            div.style.padding = "10px";
-                            div.style.margin = "10px";
-                            div.style.borderRadius = "5px";
+                            div.className = "task-card";
 
                             div.innerHTML = `
-                                <p><strong>${task.title}</strong></p>
+                                <h3>📌 ${task.title}</h3>
                                 <p>${task.description}</p>
-                                <p>Due: ${task.dueDate}</p>
-                                <p style="color:${color}; font-weight:bold;">
-                                    Priority: ${task.priority}
-                                </p>
+                                <p>📅 Due: ${task.dueDate}</p>
                                 <p style="color:${color}; font-weight:bold;">
                                     Status: ${task.status}
                                 </p>
 
-                                <button onclick="completeTask(${task.taskId})">Complete</button>
-                                <button onclick="deleteTask(${task.taskId})">Delete</button>
+                                <button onclick="completeTask(${task.taskId})">✔ Complete</button>
+                                <button onclick="deleteTask(${task.taskId})">🗑 Delete</button>
                             `;
-
                             list.appendChild(div);
                         });
-
-                        // Call Notifications
                         checkDeadlines(tasks);
                     });
             }
 
-            function completeTask(taskId) {
-                fetch(`http://localhost:8080/tasks/complete?id=${taskId}`)
+            /* =========================
+               COMPLETE TASK
+               =========================
+            */
+            function completeTask(id) {
+                if (!confirm("Mark task as completed?")) return;
+
+                fetch(`http://localhost:8080/tasks/complete?id=${id}`)
                     .then(res => res.json())
-                    .then(data => {
-                        alert(data.message);
-                        loadTasks(); // refresh list
-                    });
+                    .then(() => loadTasks());
             }
 
-            function deleteTask(taskId) {
-                fetch(`http://localhost:8080/tasks/delete?id=${taskId}`)
+            /* =========================
+               DELETE TASK
+               ========================= */
+            function deleteTask(id) {
+                if (!confirm("Delete this task?")) return;
+
+                fetch(`http://localhost:8080/tasks/delete?id=${id}`)
                     .then(res => res.json())
-                    .then(data => {
-                        alert(data.message);
-                        loadTasks(); // refresh list
-                    });
+                    .then(() => loadTasks());
             }
 
+            /* =========================
+               NOTIFICATIONS
+               =========================
+            */
             function checkDeadlines(tasks) {
                 const today = new Date();
-
                 const notify1 = document.getElementById("notify1").checked;
                 const notify3 = document.getElementById("notify3").checked;
 
                 tasks.forEach(task => {
-
                     if (task.status === "COMPLETED") return;
 
                     const due = new Date(task.dueDate);
-                    const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
-                    const key = task.taskId + "-" + diffDays;
+                    const diff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
 
+                    const key = task.taskId + "-" + diff;
                     if (shownAlerts.has(key)) return;
                     shownAlerts.add(key);
 
-                    // Overdue
-                    if (diffDays < 0) {
-                        alert(`❗ OVERDUE: "${task.title}"`);
-                    }
-
-                    // 1-day notification
-                    if (notify1 && diffDays === 1) {
-                        alert(`⚠️ "${task.title}" is due in 1 day!`);
-                    }
-
-                    // 3-day notification
-                    if (notify3 && diffDays === 3) {
-                        alert(`📅 "${task.title}" is due in 3 days!`);
-                    }
+                    if (diff < 0) alert(`❗ OVERDUE: ${task.title}`);
+                    if (notify1 && diff === 1) alert(`⚠️ Due tomorrow: ${task.title}`);
+                    if (notify3 && diff === 3) alert(`📅 Due in 3 days: ${task.title}`);
                 });
             }
         </script>
