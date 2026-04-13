@@ -93,26 +93,32 @@ public class TaskDAO {
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setInt(1, taskId);
-            stmt.executeUpdate();
+
+            int rows = stmt.executeUpdate(); // debug
+            System.out.println("Rows deleted: " + rows);
 
         } catch (Exception e) {
-            System.out.println("\nError deleting task.");
+            System.out.println("Error deleting task.");
+            e.printStackTrace();
         }
     }
 
     //Update task status
     public void completeTask(int taskId) {
-        String sql = "UPDATE tasks SET status = 'COMPLETED' WHERE taskId = ?";
+        String sql = "UPDATE tasks SET status = 'COMPLETED' WHERE id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(101, taskId);
-            stmt.executeUpdate();
+            stmt.setInt(1, taskId);
+
+            // Debug
+            int rows = stmt.executeUpdate();
+            System.out.println("Rows updated: " + rows);
         } catch (Exception e) {
-            System.out.println("\nError completing task.");
+            System.out.println("Error completing task.");
+            e.printStackTrace();
         }
     }
 }

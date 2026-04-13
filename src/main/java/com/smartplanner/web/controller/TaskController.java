@@ -60,17 +60,13 @@ public class TaskController {
 
     @GetMapping("/complete")
     public ApiResponse completeTask(@RequestParam int id) {
-
         taskService.completeTask(id);
-
-        return new ApiResponse("Task completed", true);
+        return new ApiResponse("Task completed successfully", true);
     }
 
     @GetMapping("/delete")
     public ApiResponse deleteTask(@RequestParam int id) {
-
         taskService.deleteTask(id);
-
-        return new ApiResponse("Task deleted", true);
+        return new ApiResponse("Task deleted successfully", true);
     }
 }

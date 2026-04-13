@@ -47,7 +47,7 @@ public class UserService {
      */
     public void registerUser(String username, String password) {
         // Check if user already exists
-        User existingUser = userDAO.getUser(username, password);
+        User existingUser = userDAO.getUserByUsername(username);
 
         if (existingUser != null) {
             System.out.println("\nUser already exists.");

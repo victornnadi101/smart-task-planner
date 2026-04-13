@@ -33,12 +33,12 @@ public class UserController {
      * http://localhost:8080/users/register
      */
     @GetMapping("/register")
-    public String registerUser(
-            @RequestParam String username,
-            @RequestParam String password
-    ) {
+    public ApiResponse registerUser(@RequestParam String username,
+                                    @RequestParam String password) {
+
         userService.registerUser(username, password);
-        return "User registered successfully!";
+
+        return new ApiResponse("User registered successfully", true);
     }
 
     /*
@@ -49,16 +49,15 @@ public class UserController {
      * http://localhost:8080/users/login
      */
     @GetMapping("/login")
-    public String loginUser(
-            @RequestParam String username,
-            @RequestParam String password
-    ) {
+    public ApiResponse loginUser(@RequestParam String username,
+                                 @RequestParam String password) {
+
         User user = userService.loginUser(username, password);
 
         if (user != null) {
-            return "Login successful!";
+            return new ApiResponse("Login successful", true);
         } else {
-            return "Invalid username or password.";
+            return new ApiResponse("Invalid username or password", false);
         }
     }
 }

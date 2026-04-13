@@ -23,13 +23,13 @@
 
         <h2>📝 Sign Up</h2>
 
-        <label>Username:</label><br>
+        <label for="signupUsername">Username:</label><br>
         <input id="signupUsername"><br><br>
 
-        <label>Password:</label><br>
+        <label for="signupPassword">Password:</label><br>
         <input id="signupPassword" type="password"><br><br>
 
-        <button onclick="registerUser()">Create Account</button>
+        <button type="button" onclick="registerUser()">Create Account</button>
         <button onclick="showLogin()">Back to Login</button>
 
     </div>
@@ -52,17 +52,20 @@
         <!-- Login button -->
         <button onclick="loginUser()">Login</button>
 
+        <!-- Signup button -->
+        <p>Don't have an account?</p>
+        <button onclick="showSignup()">Sign Up</button>
     </div>
 
     <!-- =================
          DASHBOARD SECTION
          =================
     -->
-    <div id="dashboardPage" class="container" style="display:none;">
+    <div id="dashboardPage" class="container dashboard" style="display:none;">
 
         <h2>📊 Dashboard</h2>
 
-        <button onclick="showAdd()">Add Task</button>
+        <button onclick="showAdd()">Add Tasks</button>
         <button onclick="showTasks()">View Tasks</button>
 
     </div>
@@ -106,8 +109,12 @@
 
         <!-- Priority -->
         <label for="priority">Priority:</label><br>
-        <input id="priority" placeholder="HIGH / MEDIUM / LOW"><br><br>
-
+            <div class="priority-buttons">
+                <button type="button" onclick="setPriority('HIGH')" id="pHigh">HIGH</button>
+                <button type="button" onclick="setPriority('MEDIUM')" id="pMedium">MEDIUM</button>
+                <button type="button" onclick="setPriority('LOW')" id="pLow">LOW</button>
+            </div>
+            <input type="hidden" id="priority">
         <button onclick="addTask()">Add Task</button>
         <button onclick="showDashboard()">Back</button>
 
@@ -115,18 +122,30 @@
              TASK DISPLAY
              =========================
         -->
-            <div id="tasksPage" class="container" style="display:none;">
+        </div>
+    </div>
+
+    <!-- Tasks page -->
+    <div id="tasksPage" style="display:none;">
+        <div class="main-layout">
+            <!-- LEFT SIDE - TASK LIST -->
+            <div class="tasks-container">
                 <h2>📌 Tasks</h2>
-                <button onclick="loadTasks()">Load Tasks</button>
                 <button onclick="showDashboard()">Back</button>
-                <div id="taskList"></div>
+                <div id="taskList" class="task-list"></div>
+            </div>
+
+            <!-- RIGHT SIDE - NOTIFICATIONS PANEL -->
+            <div class="notification-panel">
+                <h3>🔔 Notifications</h3>
+                <div id="toastContainer"></div>
             </div>
         </div>
     </div>
         <script>
             function showLogin() {
                 hideAll();
-                document.getElementById("loginPage").style.display = "block";
+                document.getElementById("loginSection").style.display = "block";
             }
 
             function showSignup() {
@@ -141,51 +160,79 @@
 
             function showAdd() {
                 hideAll();
-                document.getElementById("addPage").style.display = "block";
+                document.getElementById("appSection").style.display = "block";
             }
 
             function showTasks() {
                 hideAll();
                 document.getElementById("tasksPage").style.display = "block";
+                loadTasks();
             }
 
             function hideAll() {
-                document.getElementById("loginPage").style.display = "none";
+                document.getElementById("loginSection").style.display = "none";
                 document.getElementById("signupPage").style.display = "none";
                 document.getElementById("dashboardPage").style.display = "none";
-                document.getElementById("addPage").style.display = "none";
+                document.getElementById("appSection").style.display = "none";
                 document.getElementById("tasksPage").style.display = "none";
             }
 
-            function registerUser() {
-                const username = document.getElementById("signupUsername").value;
-                const password = document.getElementById("signupPassword").value;
-
-                fetch(`http://localhost:8080/users/register?username=${username}&password=${password}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        alert(data.message);
-                        showLogin();
-                    });
-            }
-
-            let currentUser = "";
-
             function loginUser() {
-                const username = document.getElementById("loginUsername").value;
-                const password = document.getElementById("loginPassword").value;
+                const username = document.getElementById("loginUsername").value.trim();
+                const password = document.getElementById("loginPassword").value.trim();
+
+                if (!username || !password) {
+                    showPopup("Enter username and password");
+                    return;
+                }
 
                 fetch(`http://localhost:8080/users/login?username=${username}&password=${password}`)
                     .then(res => res.json())
                     .then(data => {
+                        console.log("LOGIN RESPONSE:", data);
 
-                        if (data.success) {
+                        if (data.success === true) {
                             currentUser = username;
-                            alert("Login successful!");
+                            showPopup("Login successful!");
                             showDashboard();
+
                         } else {
-                            alert("Invalid login.");
+                            showPopup(data.message);
                         }
+                    })
+                    .catch(err => {
+                        console.error("Login error:", err);
+                        showPopup("Login failed.");
+                    });
+            }
+
+            function registerUser() {
+
+                const username = document.getElementById("signupUsername").value.trim();
+                const password = document.getElementById("signupPassword").value.trim();
+
+                if (!username || !password) {
+                    showPopup("Username and password required");
+                    return;
+                }
+
+                fetch(`http://localhost:8080/users/register?username=${username}&password=${password}`)
+                    .then(res => {
+                        console.log("REGISTER STATUS:", res.status);
+                        return res.json();
+                    })
+                    .then(data => {
+                        console.log("REGISTER DATA:", data);
+
+                        showPopup(data.message || "Signup response");
+
+                        showLogin();
+                        document.getElementById("signupUsername").value = "";
+                        document.getElementById("signupPassword").value = "";
+                    })
+                    .catch(err => {
+                        console.error("REGISTER ERROR:", err);
+                        showPopup("Signup failed");
                     });
             }
 
@@ -193,6 +240,7 @@
                GLOBAL VARIABLES
                =========================
             */
+            let currentUser = "";
             let shownAlerts = new Set();
 
             /* =========================
@@ -205,19 +253,38 @@
             };
 
             /* =========================
+               IN-APP NOTIFICATIONS
+               =========================
+            */
+            function showToast(message) {
+                const container = document.getElementById("toastContainer");
+
+                const toast = document.createElement("div");
+                toast.className = "toast";
+                toast.innerText = message;
+
+                container.appendChild(toast);
+            }
+
+            /* =========================
                ADD TASK FUNCTION
                =========================
             */
             function addTask() {
+                if (!currentUser) {
+                    showToast("You must login first.");
+                    return;
+                }
+
                 const title = document.getElementById("title").value.trim();
                 const description = document.getElementById("description").value.trim();
                 const dueDate = document.getElementById("dueDate").value;
                 const priority = document.getElementById("priority").value.trim();
 
                 // Validation
-                if (!title) return alert("Title is required.");
-                if (!dueDate) return alert("Due Date is required.");
-                if (!priority) return alert("Priority is required.");
+                if (!title) return showPopup("Please enter a task title.");
+                if (!dueDate) return showPopup("Please select a due date.");
+                if (!priority) return showPopup("Please choose a priority.");
 
                 const data = {
                     username: currentUser,
@@ -227,13 +294,39 @@
                     priority
                 };
 
+                // Check duplicate
+                const existingTasks = document.querySelectorAll(".task-title");
+
+                let duplicate = false;
+
+                existingTasks.forEach(task => {
+                    if (task.innerText.includes(title)) {
+                        duplicate = true;
+                    }
+                });
+
+                if (duplicate) {
+                    const confirmAdd = confirm("This task already exists. Add anyway?");
+                    if (!confirmAdd) return;
+                }
+
                 fetch("http://localhost:8080/tasks/add", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(data)
                 })
                     .then(res => res.json())
-                    .then(response => alert(response.message));
+                    .then(response => showPopup(response.message));
+            }
+
+            function showPopup(message) {
+                const popup = document.createElement("div");
+                popup.className = "popup";
+                popup.innerText = message;
+
+                document.body.appendChild(popup);
+
+                setTimeout(() => popup.remove(), 2000);
             }
 
             /* =========================
@@ -241,50 +334,92 @@
                =========================
             */
             function loadTasks() {
-                fetch(`http://localhost:8080/tasks/view?username=testuser`)
+                fetch(`http://localhost:8080/tasks/view?username=${currentUser}`)
                     .then(res => res.json())
                     .then(tasks => {
                         const list = document.getElementById("taskList");
                         list.innerHTML = "";
 
-                        if (!tasks.length) {
+                        if (!tasks || tasks.length === 0) {
                             list.innerHTML = "<p>No tasks found.</p>";
                             return;
                         }
 
                         // Sort by priority
                         tasks.sort((a, b) => {
-                            const order = {HIGH: 1, MEDIUM: 2, LOW: 3};
-                            return order[a.priority] - order[b.priority];
+                            const priorityOrder = { HIGH: 1, MEDIUM: 2, LOW: 3 };
+
+                            if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+                                return priorityOrder[a.priority] - priorityOrder[b.priority];
+                            }
+
+                            return new Date(a.dueDate) - new Date(b.dueDate);
                         });
 
                         const today = new Date();
 
                         tasks.forEach(task => {
+
                             const due = new Date(task.dueDate);
-                            let color = "orange";
 
-                            if (task.status === "COMPLETED") color = "green";
-                            else if (due < today) color = "red";
+                            // =========================
+                            // PRIORITY COLOR
+                            // =========================
+                            let priorityColor = "black";
 
+                            if (task.priority === "HIGH") priorityColor = "red";
+                            else if (task.priority === "MEDIUM") priorityColor = "orange";
+                            else if (task.priority === "LOW") priorityColor = "green";
+
+
+                            // =========================
+                            // STATUS COLOR
+                            // =========================
+                            let statusColor = "orange"; // default pending
+
+                            if (task.status === "COMPLETED") {
+                                statusColor = "green";
+                            }
                             const div = document.createElement("div");
                             div.className = "task-card";
 
                             div.innerHTML = `
-                                <h3>📌 ${task.title}</h3>
-                                <p>${task.description}</p>
-                                <p>📅 Due: ${task.dueDate}</p>
-                                <p style="color:${color}; font-weight:bold;">
-                                    Status: ${task.status}
-                                </p>
+                                <span class="task-title">📌 ${task.title}</span>
 
-                                <button onclick="completeTask(${task.taskId})">✔ Complete</button>
-                                <button onclick="deleteTask(${task.taskId})">🗑 Delete</button>
+                                <span class="task-date">📅 ${task.dueDate}</span>
+
+                                <span class="task-priority" style="
+                                    color: ${task.priority === 'HIGH' ? 'red' :
+                                                            task.priority === 'MEDIUM' ? 'orange' :
+                                                                'green'};
+                                ">
+                                    ${task.priority}
+                                </span>
+
+                                <span class="task-status" style="
+                                    color: ${task.status === 'COMPLETED' ? 'green' : 'orange'};
+                                ">
+                                    ${task.status}
+                                </span>
+
+                                <button class="done-btn" onclick="completeTask(${task.id !== undefined ? task.id : task.taskId})">✔</button>
+                                <button class="delete-btn" onclick="deleteTask(${task.id !== undefined ? task.id : task.taskId})">🗑</button>
                             `;
                             list.appendChild(div);
                         });
                         checkDeadlines(tasks);
                     });
+            }
+
+            function setPriority(level) {
+
+                document.getElementById("priority").value = level;
+
+                document.querySelectorAll(".priority-buttons button")
+                    .forEach(btn => btn.classList.remove("active"));
+
+                document.getElementById("p" + level.charAt(0) + level.slice(1).toLowerCase())
+                    .classList.add("active");
             }
 
             /* =========================
@@ -296,18 +431,39 @@
 
                 fetch(`http://localhost:8080/tasks/complete?id=${id}`)
                     .then(res => res.json())
-                    .then(() => loadTasks());
+                    .then(data => {
+                        showPopup(data.message || "Task completed successfully");
+                        loadTasks();
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showPopup("Error completing task");
+                    });
             }
 
             /* =========================
                DELETE TASK
-               ========================= */
+               =========================
+            */
             function deleteTask(id) {
-                if (!confirm("Delete this task?")) return;
+                if (!id) {
+                    console.error("Invalid ID:", id);
+                    showPopup("Error: Task ID missing");
+                    return;
+                }
+
+                if (!confirm("Are you sure you want to delete this task?")) return;
 
                 fetch(`http://localhost:8080/tasks/delete?id=${id}`)
                     .then(res => res.json())
-                    .then(() => loadTasks());
+                    .then(data => {
+                        showPopup(data.message || "Task deleted successfully");
+                        loadTasks();
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showPopup("Error deleting task");
+                    });
             }
 
             /* =========================
@@ -315,23 +471,30 @@
                =========================
             */
             function checkDeadlines(tasks) {
+
                 const today = new Date();
                 const notify1 = document.getElementById("notify1").checked;
                 const notify3 = document.getElementById("notify3").checked;
 
+                const container = document.getElementById("toastContainer");
+
+                // 🔥 CLEAR OLD NOTIFICATIONS EVERY TIME
+                container.innerHTML = "";
+
                 tasks.forEach(task => {
+
                     if (task.status === "COMPLETED") return;
 
                     const due = new Date(task.dueDate);
                     const diff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
 
-                    const key = task.taskId + "-" + diff;
-                    if (shownAlerts.has(key)) return;
-                    shownAlerts.add(key);
+                    if (notify1 && diff === 1) {
+                        showToast(`⚠ Due tomorrow: ${task.title}`);
+                    }
 
-                    if (diff < 0) alert(`❗ OVERDUE: ${task.title}`);
-                    if (notify1 && diff === 1) alert(`⚠️ Due tomorrow: ${task.title}`);
-                    if (notify3 && diff === 3) alert(`📅 Due in 3 days: ${task.title}`);
+                    if (notify3 && diff === 3) {
+                        showToast(`📅 Due in 3 days: ${task.title}`);
+                    }
                 });
             }
         </script>

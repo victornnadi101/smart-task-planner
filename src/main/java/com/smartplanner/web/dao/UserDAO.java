@@ -18,16 +18,20 @@ import java.sql.ResultSet;
  */
 public class UserDAO {
     public void saveUser(User user) {
-        String sql = "INSERT INTO users(username, password) VALUES(?,?)";
+        String sql = "INSERT INTO users(username, password) VALUES (?, ?)";
 
-        try(Connection conn = DatabaseHelper.connect();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPassword());
+
             stmt.executeUpdate();
-        } catch(Exception e) {
-            System.out.println("\nError saving user!");
+
+            System.out.println("User saved successfully!");
+
+        } catch (Exception e) {
+            System.out.println("\nError saving user.");
         }
     }
 
@@ -47,6 +51,28 @@ public class UserDAO {
         } catch(Exception e) {
             System.out.println("\nError retrieving user!");
         }
+        return null;
+    }
+
+    public User getUserByUsername(String username) {
+
+        String sql = "SELECT * FROM users WHERE username = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, username);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new User(username, rs.getString("password"));
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error retrieving user by username.");
+        }
+
         return null;
     }
 }
