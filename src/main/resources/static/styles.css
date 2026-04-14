@@ -185,12 +185,17 @@ button:active {
     display: flex;
     gap: 20px;
     padding: 10px;
+
+    align-items: flex-start;
+    width: 100%;
 }
 
 /* LEFT SIDE */
 .tasks-container {
     width: 70%;
+    min-width: 0;
     padding: 15px;
+
     background: rgba(255,255,255,0.9);
     border-radius: 10px;
 }
@@ -204,6 +209,7 @@ button:active {
 }
 
 /* RIGHT SIDE */
+
 .notification-panel {
     width: 30%;
     min-width: 260px;
@@ -220,27 +226,27 @@ button:active {
     box-shadow: -3px 0 10px rgba(0,0,0,0.15);
 }
 
+#tasksPage {
+    background: linear-gradient(135deg, #f5deb3, #deb887);
+    border: 2px solid #8b5a2b;
+    padding: 15px;
+    border-radius: 10px;
+}
+
 /* =========================
    TASK LIST
    ========================= */
-.task-title {
-    text-align: left;
-    font-weight: bold;
-    font-size: 16px;
-}
-
 .task-list {
     width: 100%;
-}
-
-.task-date {
-    text-align: center;
 }
 
 .task-card {
     width: 100%;
     display: grid;
-    grid-template-columns: 2fr 1.5fr 1fr 1fr auto auto;
+
+    grid-template-columns: 1.5fr 1.2fr 1fr 1fr auto auto;
+
+    align-items: center;
 
     padding: 12px;
     margin-bottom: 10px;
@@ -255,17 +261,34 @@ button:active {
     transition: 0.25s ease;
 }
 
+.task-title {
+    text-align: left;
+}
+
+.task-date {
+    text-align: center;
+}
+
+.task-priority {
+    text-align: center;
+    font-weight: bold;
+}
+
+.task-status {
+    text-align: center;
+    font-weight: bold;
+}
+
 .task-card:not(:last-child) {
     border-bottom: 1px solid #ccc;
 }
 
 .task-card button {
-    margin-left: 8px;
+    margin-left: 12px;
 }
 
 .task-card:hover {
-    transform: scale(1.04);
-    background-color: #f5f5f5;
+    transform: scale(1.03);
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
@@ -280,11 +303,6 @@ button:active {
 /* =========================
    TEXT STYLES
    ========================= */
-
-.task-priority {
-    font-weight: bold;
-    text-align: center;
-}
 
 #pHigh {
     background-color: red;
@@ -309,12 +327,6 @@ button:active {
     opacity: 1;
     border: 2px solid black;
     transform: scale(1.1);
-}
-
-/* status colors */
-.task-status {
-    font-weight: bold;
-    text-align: center;
 }
 
 .done-btn {
@@ -406,7 +418,8 @@ button:active {
 
     .tasks-container,
     .notification-panel {
-        width: 100%;
+        width: 30%;
+        min-width: 260px;
     }
 
     .container {

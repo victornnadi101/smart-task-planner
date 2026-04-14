@@ -389,21 +389,31 @@
                                 <span class="task-date">📅 ${task.dueDate}</span>
 
                                 <span class="task-priority" style="
-                                    color: ${task.priority === 'HIGH' ? 'red' :
-                                                            task.priority === 'MEDIUM' ? 'orange' :
-                                                                'green'};
+                                    color: ${task.priority === 'HIGH' ? '#d32f2f' :
+                                            task.priority === 'MEDIUM' ? '#f57c00' :
+                                            '#388e3c'};
+                                    font-weight: bold;
+                                    background: ${task.priority === 'HIGH' ? '#ffebee' :
+                                                task.priority === 'MEDIUM' ? '#fff3e0' :
+                                                '#e8f5e9'};
+                                    padding: 4px 8px;
+                                    border-radius: 5px;
                                 ">
                                     ${task.priority}
                                 </span>
 
                                 <span class="task-status" style="
-                                    color: ${task.status === 'COMPLETED' ? 'green' : 'orange'};
+                                    color: ${task.status === 'COMPLETED' ? '#2e7d32' : '#f57c00'};
+                                    font-weight: bold;
+                                    background: ${task.status === 'COMPLETED' ? '#e8f5e9' : '#fff3e0'};
+                                    padding: 4px 8px;
+                                    border-radius: 5px;
                                 ">
                                     ${task.status}
                                 </span>
 
-                                <button class="done-btn" onclick="completeTask(${task.id !== undefined ? task.id : task.taskId})">✔</button>
-                                <button class="delete-btn" onclick="deleteTask(${task.id !== undefined ? task.id : task.taskId})">🗑</button>
+                                <button class="done-btn" onclick="completeTask(${task.id || task.taskId})">✔</button>
+                                <button class="delete-btn" onclick="deleteTask(${task.id || task.taskId})">🗑</button>
                             `;
                             list.appendChild(div);
                         });
@@ -427,6 +437,12 @@
                =========================
             */
             function completeTask(id) {
+                if (!id) {
+                    console.error("Invalid ID:", id);
+                    showPopup("Error: Task ID missing");
+                    return;
+                }
+
                 if (!confirm("Mark task as completed?")) return;
 
                 fetch(`http://localhost:8080/tasks/complete?id=${id}`)
@@ -471,18 +487,16 @@
                =========================
             */
             function checkDeadlines(tasks) {
-
                 const today = new Date();
                 const notify1 = document.getElementById("notify1").checked;
                 const notify3 = document.getElementById("notify3").checked;
 
                 const container = document.getElementById("toastContainer");
 
-                // 🔥 CLEAR OLD NOTIFICATIONS EVERY TIME
+                // CLEAR OLD NOTIFICATIONS EVERY TIME
                 container.innerHTML = "";
 
                 tasks.forEach(task => {
-
                     if (task.status === "COMPLETED") return;
 
                     const due = new Date(task.dueDate);
