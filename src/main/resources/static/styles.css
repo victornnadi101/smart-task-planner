@@ -7,6 +7,11 @@
    GLOBAL STYLES
    =========================
 */
+.container {
+    width: 95%;
+    max-width: 600px;
+    margin: auto;
+}
 
 body {
     font-family: Arial, sans-serif;
@@ -412,21 +417,40 @@ button:active {
    ========================= */
 
 @media (max-width: 768px) {
+
+    /* STACK LAYOUT */
     .main-layout {
         flex-direction: column;
+        gap: 15px;
     }
 
+    /* FULL WIDTH SECTIONS */
     .tasks-container,
     .notification-panel {
-        width: 30%;
-        min-width: 260px;
+        width: 100%;
+        min-width: unset;
     }
 
+    /* MAIN CONTAINER */
     .container {
-        width: 90%;
+        width: 95%;
+        margin: auto;
     }
 
+    /* DASHBOARD */
     .dashboard {
-        width: 90%;
+        width: 95%;
+    }
+
+    /* INPUTS & BUTTONS FULL WIDTH */
+    input, button {
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 8px;
+    }
+
+    /* TASK CARD */
+    .task-card {
+        width: 100%;
     }
 }
