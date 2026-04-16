@@ -4,7 +4,6 @@ import com.smartplanner.web.model.Task;
 import com.smartplanner.web.model.Priority;
 import com.smartplanner.web.model.User;
 import com.smartplanner.web.service.TaskService;
-import com.smartplanner.web.controller.ApiResponse;
 
 import org.springframework.web.bind.annotation.*;
 

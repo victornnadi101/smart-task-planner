@@ -11,4 +11,4 @@ COPY . .
 RUN chmod +x mvnw && ./mvnw clean package
 
 # Run the app
-CMD ["java", "-jar", "target/SmartTaskPlannerWeb-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/web-0.0.1-SNAPSHOT.jar"]
