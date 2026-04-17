@@ -7,10 +7,22 @@
    GLOBAL STYLES
    =========================
 */
+
+* {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 .container {
     width: 95%;
     max-width: 600px;
     margin: auto;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
 body {
