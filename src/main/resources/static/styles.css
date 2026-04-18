@@ -140,7 +140,7 @@ button {
     background-color: #4CAF50;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     font-weight: bold;
 
     transition: 0.2s ease;
@@ -149,10 +149,22 @@ button {
 button:hover {
     background-color: #45a049;
     transform: scale(1.05);
+    opacity: 0.9;
 }
 
 button:active {
     transform: scale(0.95);
+}
+
+button[onclick="addTask()"] {
+    background-color: #1976d2;
+    color: white;
+    font-weight: bold;
+}
+
+button[onclick="showDashboard()"] {
+    background-color: #555;
+    color: white;
 }
 
 /* =========================
@@ -426,43 +438,66 @@ button:active {
 
 /* =========================
    MOBILE RESPONSIVE
-   ========================= */
+   =========================
+*/
 
 @media (max-width: 768px) {
-
-    /* STACK LAYOUT */
-    .main-layout {
-        flex-direction: column;
-        gap: 15px;
+    body {
+        padding: 10px;
     }
 
-    /* FULL WIDTH SECTIONS */
+    .container,
+    .dashboard {
+        width: 100%;
+        max-width: 100%;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .main-layout {
+        flex-direction: column;
+        width: 100%;
+    }
+
     .tasks-container,
     .notification-panel {
         width: 100%;
         min-width: unset;
     }
 
-    /* MAIN CONTAINER */
-    .container {
-        width: 95%;
-        margin: auto;
+    .task-card {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
 
-    /* DASHBOARD */
-    .dashboard {
-        width: 95%;
+    .task-card button {
+        width: 48%;
+        margin-top: 5px;
     }
 
-    /* INPUTS & BUTTONS FULL WIDTH */
-    input, button {
-        width: 100%;
-        box-sizing: border-box;
+    .task-card .done-btn,
+    .task-card .delete-btn {
+        display: inline-block;
+    }
+
+    .task-card .button-row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* BUTTON ROW */
+    .task-actions {
+        display: flex;
+        justify-content: space-between;
         margin-top: 8px;
     }
 
-    /* TASK CARD */
-    .task-card {
-        width: 100%;
+    /* BUTTON STYLE */
+    .done-btn, .delete-btn {
+        flex: 1;
+        margin: 2px;
+        padding: 8px;
+        font-size: 14px;
     }
 }

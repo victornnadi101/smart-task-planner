@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <title>Smart Task Planner</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         <!-- External CSS -->
         <link rel="stylesheet" href="/styles.css">
     </head>
@@ -67,6 +68,7 @@
 
         <button onclick="showAdd()">Add Tasks</button>
         <button onclick="showTasks()">View Tasks</button>
+        <button onclick="logoutUser()">Logout</button>
 
     </div>
 
@@ -132,6 +134,7 @@
             <div class="tasks-container">
                 <h2>📌 Tasks</h2>
                 <button onclick="showDashboard()">Back</button>
+                <button onclick="goToNotifications()">🔔 Notifications</button>
                 <div id="taskList" class="task-list"></div>
             </div>
 
@@ -186,7 +189,16 @@
                     return;
                 }
 
-                fetch(`${BASE_URL}/users/login?username=${username}&password=${password}`)
+                fetch(`${BASE_URL}/users/login`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                })
                     .then(res => res.json())
                     .then(data => {
                         console.log("LOGIN RESPONSE:", data);
@@ -195,15 +207,20 @@
                             currentUser = username;
                             showPopup("Login successful!");
                             showDashboard();
-
                         } else {
-                            showPopup(data.message);
+                            showPopup(data.message || "Login failed");
                         }
                     })
                     .catch(err => {
                         console.error("Login error:", err);
                         showPopup("Login failed.");
                     });
+            }
+
+            function logoutUser() {
+                currentUser = "";
+                showPopup("Logged out successfully");
+                showLogin();
             }
 
             function registerUser() {
@@ -216,11 +233,17 @@
                     return;
                 }
 
-                fetch(`${BASE_URL}/users/register?username=${username}&password=${password}`)
-                    .then(res => {
-                        console.log("REGISTER STATUS:", res.status);
-                        return res.json();
+                fetch(`${BASE_URL}/users/register`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
                     })
+                })
+                    .then(res => res.json())
                     .then(data => {
                         console.log("REGISTER DATA:", data);
 
@@ -330,6 +353,15 @@
                 setTimeout(() => popup.remove(), 2000);
             }
 
+            /* =================
+               NOTIFICATIONS
+               =================
+            */
+            function goToNotifications() {
+                document.querySelector(".notification-panel")
+                    .scrollIntoView({ behavior: "smooth" });
+            }
+
             /* =========================
                LOAD TASKS
                =========================
@@ -385,35 +417,20 @@
 
                             div.innerHTML = `
                                 <span class="task-title">📌 ${task.title}</span>
-
                                 <span class="task-date">📅 ${task.dueDate}</span>
 
-                                <span class="task-priority" style="
-                                    color: ${task.priority === 'HIGH' ? '#d32f2f' :
-                                            task.priority === 'MEDIUM' ? '#f57c00' :
-                                            '#388e3c'};
-                                    font-weight: bold;
-                                    background: ${task.priority === 'HIGH' ? '#ffebee' :
-                                                task.priority === 'MEDIUM' ? '#fff3e0' :
-                                                '#e8f5e9'};
-                                    padding: 4px 8px;
-                                    border-radius: 5px;
-                                ">
+                                <span class="task-priority">
                                     ${task.priority}
                                 </span>
 
-                                <span class="task-status" style="
-                                    color: ${task.status === 'COMPLETED' ? '#2e7d32' : '#f57c00'};
-                                    font-weight: bold;
-                                    background: ${task.status === 'COMPLETED' ? '#e8f5e9' : '#fff3e0'};
-                                    padding: 4px 8px;
-                                    border-radius: 5px;
-                                ">
+                                <span class="task-status">
                                     ${task.status}
                                 </span>
 
-                                <button class="done-btn" onclick="completeTask(${task.id || task.taskId})">✔</button>
-                                <button class="delete-btn" onclick="deleteTask(${task.id || task.taskId})">🗑</button>
+                                <div class="task-actions">
+                                    <button class="done-btn" onclick="completeTask(${task.id || task.taskId})">✔</button>
+                                    <button class="delete-btn" onclick="deleteTask(${task.id || task.taskId})">🗑</button>
+                                </div>
                             `;
                             list.appendChild(div);
                         });
