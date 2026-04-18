@@ -134,22 +134,16 @@ input {
    ========================= */
 
 button {
-    padding: 8px 12px;
-    margin-top: 8px;
-    cursor: pointer;
-    background-color: #4CAF50;
+    border: 2px solid #333;
+    background-color: #1976d2;
     color: white;
-    border: none;
-    border-radius: 8px;
     font-weight: bold;
-
-    transition: 0.2s ease;
+    padding: 8px;
+    border-radius: 6px;
 }
 
 button:hover {
-    background-color: #45a049;
-    transform: scale(1.05);
-    opacity: 0.9;
+    background-color: #125ca1;
 }
 
 button:active {
@@ -368,6 +362,7 @@ button[onclick="showDashboard()"] {
     margin-left: 10px;
 }
 
+
 /* =========================
    TOAST (RIGHT PANEL)
    ========================= */
@@ -438,23 +433,25 @@ button[onclick="showDashboard()"] {
 
 /* =========================
    MOBILE RESPONSIVE
-   =========================
-*/
+   ========================= */
 
 @media (max-width: 768px) {
+
     body {
-        padding: 10px;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
     }
 
     .container,
     .dashboard {
-        width: 100%;
-        max-width: 100%;
-        padding: 15px;
-        box-sizing: border-box;
+        width: 95%;
+        margin: auto;
+        padding: 10px;
     }
 
     .main-layout {
+        display: flex;
         flex-direction: column;
         width: 100%;
     }
@@ -469,35 +466,41 @@ button[onclick="showDashboard()"] {
         display: flex;
         flex-direction: column;
         gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .task-card button {
-        width: 48%;
+        width: 100%;
         margin-top: 5px;
     }
 
-    .task-card .done-btn,
-    .task-card .delete-btn {
-        display: inline-block;
-    }
-
-    .task-card .button-row {
+    .settings {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
     }
 
-    /* BUTTON ROW */
-    .task-actions {
+    .checkbox {
         display: flex;
-        justify-content: space-between;
-        margin-top: 8px;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
     }
 
-    /* BUTTON STYLE */
-    .done-btn, .delete-btn {
-        flex: 1;
-        margin: 2px;
-        padding: 8px;
-        font-size: 14px;
+    input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .priority-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .priority-buttons button {
+        width: 100%;
     }
 }
