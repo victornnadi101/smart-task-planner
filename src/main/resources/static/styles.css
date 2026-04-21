@@ -1,22 +1,13 @@
 /* ============================================================
    SMART TASK PLANNER
-   ============================================================
-*/
+   ============================================================ */
 
 /* =========================
-   GLOBAL STYLES
-   =========================
-*/
-
+   GLOBAL
+   ========================= */
 * {
-    max-width: 100%;
     box-sizing: border-box;
-}
-
-.container {
-    width: 95%;
-    max-width: 600px;
-    margin: auto;
+    max-width: 100%;
 }
 
 html, body {
@@ -42,23 +33,37 @@ body {
 body::before {
     content: "";
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-
     backdrop-filter: blur(3px);
-    background: rgba(255, 255, 255, 0.2);
-
+    background: rgba(255,255,255,0.2);
     z-index: -1;
 }
 
 /* =========================
+   CONTAINER
+   ========================= */
+.container {
+    width: 95%;
+    max-width: 400px;   /* unified (was conflicting 400 vs 600) */
+    margin: 30px auto;
+    padding: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f5deb3, #deb887);
+    border: 2px solid #8b5a2b;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    animation: fadeIn 0.5s ease;
+}
+
+#appSection .container {
+    background: linear-gradient(135deg, #ffffff, #e8f5e9);
+    border: 2px solid #4CAF50;
+}
+
+/* =========================
    TITLE
-   =========================
-*/
+   ========================= */
 .app-title {
-    text-align: center;
     margin-top: 20px;
     font-size: 42px;
     font-weight: 900;
@@ -67,33 +72,22 @@ body::before {
     text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 
-h2 {
-    text-align: left;
-}
-
-h1 {
-    margin-bottom: 20px;
-}
+h1 { margin-bottom: 20px; }
+h2 { text-align: left; }
 
 /* =========================
-   DASHBOARD (BIG + BOLD)
+   DASHBOARD
    ========================= */
-
 .dashboard {
     width: 500px;
     padding: 30px;
-    text-align: center;
 }
 
 .dashboard h2 {
     text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
 }
 
-/* Dashboard buttons */
 .dashboard button {
-    display: block;
     width: 100%;
     margin: 15px 0;
     padding: 12px;
@@ -105,24 +99,8 @@ h1 {
 }
 
 /* =========================
-   CONTAINER
-   ========================= */
-
-.container {
-    width: 400px;
-    margin: 30px auto;
-    padding: 20px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #f5deb3, #deb887);
-    border: 2px solid #8b5a2b;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    animation: fadeIn 0.5s ease;
-}
-
-/* =========================
    INPUTS
    ========================= */
-
 input {
     width: 95%;
     padding: 8px;
@@ -132,7 +110,6 @@ input {
 /* =========================
    BUTTONS
    ========================= */
-
 button {
     border: 2px solid #333;
     background-color: #1976d2;
@@ -150,103 +127,70 @@ button:active {
     transform: scale(0.95);
 }
 
-button[onclick="addTask()"] {
-    background-color: #1976d2;
-    color: white;
-    font-weight: bold;
-}
-
+/* Special buttons */
 button[onclick="showDashboard()"] {
     background-color: #555;
-    color: white;
 }
 
 /* =========================
    PRIORITY BUTTONS
    ========================= */
-
 .priority-buttons button {
     margin: 5px;
-    padding: 8px;
     opacity: 0.6;
 }
 
 .priority-buttons button.active {
     opacity: 1;
     border: 2px solid black;
+    transform: scale(1.1);
 }
 
-/* =========================
-   SETTINGS (NOTIFICATIONS)
-   ========================= */
+/* priority colors */
+#pHigh { background: red; color: white; }
+#pMedium { background: orange; color: white; }
+#pLow { background: green; color: white; }
 
-/* NOTIFICATION SETTINGS - ONE LINE */
+/* =========================
+   SETTINGS
+   ========================= */
 .settings {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-
-    flex-wrap: nowrap;
-    white-space: nowrap;
     gap: 20px;
-    overflow-x: auto;        /* in case screen is small */
 }
 
 .checkbox {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 14px;
-    white-space: nowrap;
 }
 
 /* =========================
-   MAIN LAYOUT (LEFT + RIGHT)
+   MAIN LAYOUT
    ========================= */
-
 .main-layout {
     display: flex;
     gap: 20px;
     padding: 10px;
-
-    align-items: flex-start;
-    width: 100%;
 }
 
-/* LEFT SIDE */
 .tasks-container {
     width: 70%;
-    min-width: 0;
     padding: 15px;
-
     background: rgba(255,255,255,0.9);
     border-radius: 10px;
 }
 
-.tasks-container h2 {
-    margin-bottom: 10px;
-}
-
-.tasks-container button {
-    margin-bottom: 20px;
-}
-
-/* RIGHT SIDE */
-
 .notification-panel {
     width: 30%;
     min-width: 260px;
-
     background: linear-gradient(135deg, #ffffff, #e3f2fd);
     padding: 15px;
-
     border-left: 4px solid #4CAF50;
     border-radius: 10px;
-
     height: 80vh;
     overflow-y: auto;
-
-    box-shadow: -3px 0 10px rgba(0,0,0,0.15);
 }
 
 #tasksPage {
@@ -257,247 +201,106 @@ button[onclick="showDashboard()"] {
 }
 
 /* =========================
-   TASK LIST
+   TASKS
    ========================= */
 .task-list {
     width: 100%;
 }
 
 .task-card {
-    width: 100%;
     display: grid;
-
     grid-template-columns: 1.5fr 1.2fr 1fr 1fr auto auto;
-
-    align-items: center;
-
     padding: 12px;
     margin-bottom: 10px;
-
     border-radius: 10px;
     border: 1px solid #c19a6b;
-
     background: linear-gradient(135deg, #fff8dc, #f5deb3);
-
     font-size: 15px;
-
     transition: 0.25s ease;
-}
-
-.task-title {
-    text-align: left;
-}
-
-.task-date {
-    text-align: center;
-}
-
-.task-priority {
-    text-align: center;
-    font-weight: bold;
-}
-
-.task-status {
-    text-align: center;
-    font-weight: bold;
-}
-
-.task-card:not(:last-child) {
-    border-bottom: 1px solid #ccc;
-}
-
-.task-card button {
-    margin-left: 12px;
 }
 
 .task-card:hover {
     transform: scale(1.03);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
-/* spacing */
 .task-card span {
     margin-right: 10px;
-    color: #222;
-    font-weight: 500;
-    padding: 0 5px;
 }
+
+/* buttons */
+.done-btn { background: #4CAF50; }
+.delete-btn { background: #f44336; }
 
 /* =========================
-   TEXT STYLES
+   TOAST + POPUP
    ========================= */
-
-#pHigh {
-    background-color: red;
-    color: white;
-}
-
-#pMedium {
-    background-color: orange;
-    color: white;
-}
-
-#pLow {
-    background-color: green;
-    color: white;
-}
-
-#pHigh { background-color: red !important; }
-#pMedium { background-color: orange !important; }
-#pLow { background-color: green !important; }
-
-.priority-buttons button.active {
-    opacity: 1;
-    border: 2px solid black;
-    transform: scale(1.1);
-}
-
-.done-btn {
-    background-color: #4CAF50;
-    margin-left: 10px;
-}
-
-.delete-btn {
-    background-color: #f44336;
-    margin-left: 10px;
-}
-
-
-/* =========================
-   TOAST (RIGHT PANEL)
-   ========================= */
-
 .toast {
-    background-color: #333;
+    background: #333;
     color: white;
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 6px;
-
-    animation: slideIn 0.4s ease;
 }
-
-.toast:hover {
-    background-color: #444;
-}
-
-/* =========================
-   CENTER POPUP
-   ========================= */
 
 .popup {
     position: fixed;
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-
-    background: linear-gradient(135deg, #4CAF50, #66bb6a);
+    background: #4CAF50;
     color: white;
-
-    padding: 20px 30px;
-    font-size: 18px;
+    padding: 20px;
     border-radius: 8px;
-
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-
-    z-index: 2000;
-}
-
-#appSection .container {
-    background: linear-gradient(135deg, #ffffff, #e8f5e9);
-    border: 2px solid #4CAF50;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* =========================
-   MOBILE RESPONSIVE
+   MOBILE
    ========================= */
-
 @media (max-width: 768px) {
-
-    body {
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-    }
 
     .container,
     .dashboard {
         width: 95%;
-        margin: auto;
         padding: 10px;
     }
 
     .main-layout {
-        display: flex;
         flex-direction: column;
-        width: 100%;
     }
 
     .tasks-container,
     .notification-panel {
         width: 100%;
-        min-width: unset;
     }
 
     .task-card {
         display: flex;
         flex-direction: column;
         gap: 8px;
-        width: 100%;
-        box-sizing: border-box;
     }
 
-    .task-card button {
-        width: 100%;
-        margin-top: 5px;
-    }
-
-    .settings {
+    .task-actions {
         display: flex;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .task-actions button {
+        flex: 1;
+    }
+
+    /* notifications */
+    .settings {
         flex-direction: column;
         gap: 10px;
-        width: 100%;
-    }
-
-    .checkbox {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        width: 100%;
     }
 
     input {
         width: 100%;
-        box-sizing: border-box;
     }
 
     .priority-buttons {
-        display: flex;
         flex-direction: column;
-        gap: 8px;
     }
 
     .priority-buttons button {
