@@ -378,20 +378,20 @@
                             // =========================
                             // PRIORITY COLOR
                             // =========================
-                            let priorityColor = "black";
+                            let priorityColor = "#000";
 
-                            if (task.priority === "HIGH") priorityColor = "red";
-                            else if (task.priority === "MEDIUM") priorityColor = "orange";
-                            else if (task.priority === "LOW") priorityColor = "green";
+                            if (task.priority === "HIGH") priorityColor = "#e53935";      // red
+                            else if (task.priority === "MEDIUM") priorityColor = "#fb8c00"; // orange
+                            else if (task.priority === "LOW") priorityColor = "#43a047";    // green
 
 
                             // =========================
                             // STATUS COLOR
                             // =========================
-                            let statusColor = "orange"; // default pending
+                            let statusColor = "#fb8c00"; // pending = orange
 
                             if (task.status === "COMPLETED") {
-                                statusColor = "green";
+                                statusColor = "#43a047"; // green
                             }
                             const div = document.createElement("div");
                             div.className = "task-card";
@@ -400,11 +400,11 @@
                                 <span class="task-title">📌 ${task.title}</span>
                                 <span class="task-date">📅 ${task.dueDate}</span>
 
-                                <span class="task-priority">
+                                <span class="task-priority" style="color:${priorityColor}; font-weight:bold;">
                                     ${task.priority}
                                 </span>
 
-                                <span class="task-status">
+                                <span class="task-status" style="color:${statusColor}; font-weight:bold;">
                                     ${task.status}
                                 </span>
 
