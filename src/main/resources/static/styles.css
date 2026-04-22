@@ -160,18 +160,38 @@ button[onclick="showDashboard()"] {
 #pLow { background: green; color: white; }
 
 /* =========================
-   SETTINGS
+   SETTINGS (NOTIFICATIONS)
    ========================= */
 .settings {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+.settings {
+    display: flex;
+    flex-direction: row;
     gap: 20px;
+
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.settings::-webkit-scrollbar {
+    height: 4px;
 }
 
 .checkbox {
     display: flex;
     align-items: center;
     gap: 6px;
+    font-size: 14px;
+
+    white-space: nowrap;
 }
 
 /* =========================
@@ -295,12 +315,6 @@ button[onclick="showDashboard()"] {
 
     .task-actions button {
         flex: 1;
-    }
-
-    /* notifications */
-    .settings {
-        flex-direction: column;
-        gap: 10px;
     }
 
     input {
