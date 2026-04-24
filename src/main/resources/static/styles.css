@@ -194,6 +194,10 @@ button[onclick="showDashboard()"] {
     white-space: nowrap;
 }
 
+.checkbox span {
+    display: inline-block;
+}
+
 /* =========================
    MAIN LAYOUT
    ========================= */
@@ -305,10 +309,11 @@ button[onclick="showDashboard()"] {
         display: inline-flex;
         align-items: center;
 
-        gap: 6px;
-        margin-right: 15px;
+        gap: 4px;
+        margin-right: 12px;
 
         white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .checkbox input {
