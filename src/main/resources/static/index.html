@@ -135,6 +135,13 @@
                 <h2>📌 Tasks</h2>
                 <button onclick="showDashboard()">Back</button>
                 <button onclick="goToNotifications()">🔔 Notifications</button>
+                <button onclick="deleteAllTasks()">🗑 Clear All Tasks</button>
+                <input
+                        type="text"
+                        id="searchTask"
+                        placeholder="Search tasks..."
+                        onkeyup="filterTasks()"
+                >
                 <div id="taskList" class="task-list"></div>
             </div>
 
@@ -351,6 +358,11 @@
                 fetch(`${BASE_URL}/tasks/view?username=${currentUser}`)
                     .then(res => res.json())
                     .then(tasks => {
+                        const searchValue = document
+                            .getElementById("searchTask")
+                            .value
+                            .toLowerCase();
+
                         const list = document.getElementById("taskList");
                         list.innerHTML = "";
 
@@ -359,9 +371,27 @@
                             return;
                         }
 
+                        tasks = tasks.filter(task =>
+                            task.title.toLowerCase().includes(searchValue) ||
+                            String(task.id || task.taskId).includes(searchValue)
+                        );
+
                         // Sort by priority
                         tasks.sort((a, b) => {
-                            const priorityOrder = { HIGH: 1, MEDIUM: 2, LOW: 3 };
+
+                            if (a.status === "COMPLETED" && b.status !== "COMPLETED") {
+                                return 1;
+                            }
+
+                            if (a.status !== "COMPLETED" && b.status === "COMPLETED") {
+                                return -1;
+                            }
+
+                            const priorityOrder = {
+                                HIGH: 1,
+                                MEDIUM: 2,
+                                LOW: 3
+                            };
 
                             if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
                                 return priorityOrder[a.priority] - priorityOrder[b.priority];
@@ -417,6 +447,43 @@
                         });
                         checkDeadlines(tasks);
                     });
+            }
+
+            function filterTasks() {
+                const searchValue = document
+                    .getElementById("searchTask")
+                    .value
+                    .toLowerCase();
+
+                const cards = document.querySelectorAll(".task-card");
+
+                cards.forEach(card => {
+                    const text = card.innerText.toLowerCase();
+
+                    if (text.includes(searchValue)) {
+                        card.style.display = "grid";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            }
+
+            function searchTasks() {
+                const keyword = document.getElementById("searchInput")
+                    .value
+                    .toLowerCase();
+
+                const tasks = document.querySelectorAll(".task-card");
+
+                tasks.forEach(task => {
+                    const text = task.innerText.toLowerCase();
+
+                    if (text.includes(keyword)) {
+                        task.style.display = "flex";
+                    } else {
+                        task.style.display = "none";
+                    }
+                });
             }
 
             function setPriority(level) {
@@ -477,6 +544,28 @@
                     .catch(err => {
                         console.error(err);
                         showPopup("Error deleting task");
+                    });
+            }
+
+            function deleteAllTasks() {
+                if (!currentUser) {
+                    showPopup("Login required");
+                    return;
+                }
+
+                if (!confirm("Delete ALL tasks? This cannot be undone.")) {
+                    return;
+                }
+
+                fetch(`${BASE_URL}/tasks/deleteAll?username=${currentUser}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        showPopup(data.message || "All tasks deleted");
+                        loadTasks();
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showPopup("Error deleting all tasks");
                     });
             }
 

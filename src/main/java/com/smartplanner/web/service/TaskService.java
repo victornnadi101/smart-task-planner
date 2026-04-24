@@ -4,6 +4,7 @@ import com.smartplanner.web.dao.TaskDAO;
 import com.smartplanner.web.model.Status;
 import com.smartplanner.web.model.Task;
 import com.smartplanner.web.model.User;
+import com.smartplanner.web.util.DatabaseHelper;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -137,6 +138,10 @@ public class TaskService {
     public void deleteTask(int taskId) {
         taskDAO.deleteTask(taskId);
         System.out.println("\nTask deleted successfully.");
+    }
+
+    public void deleteAllTasks(String username) {
+        DatabaseHelper.deleteAllTasks(username);
     }
 
     /*

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ============================================================
@@ -67,5 +68,14 @@ public class TaskController {
     public ApiResponse deleteTask(@RequestParam int id) {
         taskService.deleteTask(id);
         return new ApiResponse("Task deleted successfully", true);
+    }
+
+    @GetMapping("/deleteAll")
+    public Map<String, String> deleteAllTasks(@RequestParam String username) {
+        taskService.deleteAllTasks(username);
+
+        return Map.of(
+                "message", "All tasks deleted successfully"
+        );
     }
 }
