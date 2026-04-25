@@ -368,6 +368,10 @@
 
                         if (!tasks || tasks.length === 0) {
                             list.innerHTML = "<p>No tasks found.</p>";
+
+                            // Clear notification panel too
+                            document.getElementById("toastContainer").innerHTML = "";
+
                             return;
                         }
 
@@ -550,20 +554,15 @@
             function deleteAllTasks() {
                 if (!confirm("Delete ALL tasks? This cannot be undone.")) return;
 
-                fetch(`${BASE_URL}/tasks/deleteAll?username=${currentUser}`)
+                fetch(`${BASE_URL}/tasks/deleteAll?username=${currentUser}`, {
+                    method: "DELETE"
+                })
                     .then(res => res.json())
                     .then(data => {
-
                         showPopup(data.message || "All tasks deleted successfully");
 
-                        const notificationContainer =
-                            document.getElementById("toastContainer");
-
-                        notificationContainer.innerHTML = "";
-
-                        document.getElementById("taskList").innerHTML =
-                            "<p>No tasks found.</p>";
-
+                        // Refresh everything
+                        loadTasks();
                     })
                     .catch(err => {
                         console.error(err);
