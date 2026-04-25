@@ -555,14 +555,13 @@
                 })
                     .then(res => res.json())
                     .then(data => {
-
                         showPopup(data.message);
 
-                        // Clear notification panel immediately
-                        document.getElementById("toastContainer").innerHTML = "";
-
-                        // Reload task list
+                        // Reload tasks normally
                         loadTasks();
+
+                        // Recalculate notifications (will clear them if no tasks exist)
+                        checkDeadlines([]);
                     })
                     .catch(err => {
                         console.error(err);
