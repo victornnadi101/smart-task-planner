@@ -8,6 +8,7 @@ import com.smartplanner.web.service.TaskService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,12 +71,13 @@ public class TaskController {
         return new ApiResponse("Task deleted successfully", true);
     }
 
-    @GetMapping("/deleteAll")
+    @GetMapping("/tasks/deleteAll")
     public Map<String, String> deleteAllTasks(@RequestParam String username) {
         taskService.deleteAllTasks(username);
 
-        return Map.of(
-                "message", "All tasks deleted successfully"
-        );
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "All tasks deleted successfully");
+
+        return response;
     }
 }

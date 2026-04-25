@@ -548,20 +548,17 @@
             }
 
             function deleteAllTasks() {
-                if (!confirm("Delete ALL tasks?")) return;
+                if (!confirm("Delete ALL tasks? This cannot be undone.")) return;
 
-                fetch(`${BASE_URL}/tasks/deleteAll?username=${currentUser}`, {
-                    method: "DELETE"
-                })
+                fetch(`${BASE_URL}/tasks/deleteAll?username=${currentUser}`)
                     .then(res => res.json())
                     .then(data => {
-                        showPopup(data.message);
+                        showPopup(data.message || "All tasks deleted successfully");
 
-                        // Reload tasks normally
+                        // clear notifications too
+                        document.getElementById("toastContainer").innerHTML = "";
+
                         loadTasks();
-
-                        // Recalculate notifications (will clear them if no tasks exist)
-                        checkDeadlines([]);
                     })
                     .catch(err => {
                         console.error(err);
