@@ -548,19 +548,20 @@
             }
 
             function deleteAllTasks() {
-                if (!currentUser) {
-                    showPopup("Login required");
-                    return;
-                }
+                if (!confirm("Delete ALL tasks?")) return;
 
-                if (!confirm("Delete ALL tasks? This cannot be undone.")) {
-                    return;
-                }
-
-                fetch(`${BASE_URL}/tasks/deleteAll?username=${currentUser}`)
+                fetch(`${BASE_URL}/tasks/deleteAll?username=${currentUser}`, {
+                    method: "DELETE"
+                })
                     .then(res => res.json())
                     .then(data => {
-                        showPopup(data.message || "All tasks deleted");
+
+                        showPopup(data.message);
+
+                        // Clear notification panel immediately
+                        document.getElementById("toastContainer").innerHTML = "";
+
+                        // Reload task list
                         loadTasks();
                     })
                     .catch(err => {
