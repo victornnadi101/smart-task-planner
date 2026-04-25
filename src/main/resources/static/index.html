@@ -553,12 +553,17 @@
                 fetch(`${BASE_URL}/tasks/deleteAll?username=${currentUser}`)
                     .then(res => res.json())
                     .then(data => {
+
                         showPopup(data.message || "All tasks deleted successfully");
 
-                        // clear notifications too
-                        document.getElementById("toastContainer").innerHTML = "";
+                        const notificationContainer =
+                            document.getElementById("toastContainer");
 
-                        loadTasks();
+                        notificationContainer.innerHTML = "";
+
+                        document.getElementById("taskList").innerHTML =
+                            "<p>No tasks found.</p>";
+
                     })
                     .catch(err => {
                         console.error(err);
