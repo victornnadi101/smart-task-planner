@@ -369,9 +369,7 @@
                         if (!tasks || tasks.length === 0) {
                             list.innerHTML = "<p>No tasks found.</p>";
 
-                            // Clear notification panel too
-                            document.getElementById("toastContainer").innerHTML = "";
-
+                            checkDeadlines([]);
                             return;
                         }
 
