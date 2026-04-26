@@ -559,8 +559,20 @@
                     .then(data => {
                         showPopup(data.message || "All tasks deleted successfully");
 
-                        // Refresh everything
-                        loadTasks();
+                        // CLEAR TASK LIST
+                        document.getElementById("taskList").innerHTML =
+                            "<p>No tasks found.</p>";
+
+                        // CLEAR NOTIFICATION PANEL
+                        document.getElementById("toastContainer").innerHTML = "";
+
+                        // CLEAR SEARCH BAR
+                        document.getElementById("searchTask").value = "";
+
+                        // RELOAD BACKEND
+                        setTimeout(() => {
+                            loadTasks();
+                        }, 300);
                     })
                     .catch(err => {
                         console.error(err);
