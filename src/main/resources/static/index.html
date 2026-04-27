@@ -559,18 +559,18 @@
                     .then(data => {
                         showPopup(data.message || "All tasks deleted successfully");
 
-                        // instantly clear task list visually
+                        // CLEAR TASK UI
                         document.getElementById("taskList").innerHTML =
                             "<p>No tasks found.</p>";
 
-                        // instantly clear notifications
+                        // CLEAR NOTIFICATION PANEL
                         document.getElementById("toastContainer").innerHTML = "";
 
                         shownAlerts.clear();
 
                         setTimeout(() => {
                             loadTasks();
-                        }, 1000);
+                        }, 1500);
                     })
                     .catch(err => {
                         console.error(err);
